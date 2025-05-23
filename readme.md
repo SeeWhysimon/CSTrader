@@ -1,4 +1,4 @@
-# CSTrader: Goods analyze 
+# CSTrader
 
 ## Introduction
 

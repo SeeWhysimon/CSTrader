@@ -1,8 +1,12 @@
 import json
 import pandas as pd
 import plotly.graph_objects as go
+import plotly.io as pio
 
 def kline_plotter(data_path: str):
+    # 设置 Plotly 渲染器为浏览器
+    pio.renderers.default = 'browser'
+
     with open(data_path, "r", encoding="utf-8") as f:
         raw_data = json.load(f)
 

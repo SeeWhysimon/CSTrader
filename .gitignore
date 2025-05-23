@@ -5,3 +5,29 @@ scripts/data_collector/buff/buff_config.json
 scripts/data_collector/steamdt/steamdt_config.json
 
 .DS_Store
+
+# Python 缓存文件
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+*.egg
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt

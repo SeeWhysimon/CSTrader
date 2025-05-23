@@ -1,0 +1,13 @@
+{
+  "url": "https://buff.163.com/api/market/goods/bill_order",
+  "params": {
+    "game": "csgo",
+    "goods_id": "43011"
+  },
+  "headers": {
+    "User-Agent": "Mozilla/5.0",
+    "Referer": "https://buff.163.com/goods/43011",
+    "X-Requested-With": "XMLHttpRequest",
+    "Cookie": "csrf_token=your_token; qr_code_verify_ticket=your_ticket; remember_me=your_mem; session=your_session; Locale-Supported=zh-Hans; game=csgo; Device-Id=your_device"
+  }
+}

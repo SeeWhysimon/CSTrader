@@ -1,0 +1,23 @@
+├── data/                            # 原始和处理后数据存储位置
+│   ├── raw/                         # 原始数据
+│   └── processed/                   # 处理后的数据
+│
+├── scripts/                         # 所有脚本代码
+│   ├── __init__.py
+│   ├── main.py                      # 主执行脚本，可调用各模块
+│   ├── utils.py                     # 工具函数
+│   │
+│   ├── data_collector/              # 统一管理所有数据获取逻辑
+│   │   ├── __init__.py
+│   │   ├── base.py                  # 定义DataCollector基类
+│   │   ├── buff/                    # Buff数据抓取逻辑
+│   │   │   ├── __init__.py
+│   │   │   └── buff_collector.py    # 实现Buff数据的抓取
+│   │   └── [other_source]/          # 可添加更多数据源
+│   │
+│   └── data_analyzer/               # 模型训练与预测脚本
+│       ├── __init__.py
+│       └── pred.py
+│
+├── requirements.txt                 # 项目依赖
+└── README.md

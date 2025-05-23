@@ -3,3 +3,5 @@ data/raw/*.json
 
 scripts/data_collector/buff/buff_config.json
 scripts/data_collector/steamdt/steamdt_config.json
+
+.DS_Store

@@ -4,7 +4,7 @@ import requests
 import json
 import os
 from datetime import datetime
-from data_collector.base import BaseDataCollector
+from scripts.data_collector.base import BaseDataCollector
 
 class SteamDTDataCollector(BaseDataCollector):
     def __init__(self, proxies=None, debug=False):

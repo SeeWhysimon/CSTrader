@@ -4,7 +4,8 @@
 
 Preview:
 
-![k-line example](figs/newplot.png)
+![k-line example](figs/kline.png)
+![pred example](figs/pred.png)
 
 
 ## How to use

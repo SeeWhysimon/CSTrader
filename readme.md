@@ -1,5 +1,12 @@
 # CSTrader: Goods analyze 
 
+## Introduction
+
+Preview:
+
+![k-line example](figs/newplot.png)
+
+
 ## How to use
 
 ```

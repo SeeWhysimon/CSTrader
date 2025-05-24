@@ -50,12 +50,14 @@ class SteamDTDataCollector(BaseDataCollector):
                 print("[ERROR] Unexpected response format (not a dict)")
                 return None
 
-            # 强制转换时间戳字段为字符串（假设时间戳是每条记录的第一个元素）
+            # 转换时间戳字段为 int
             if "data" in data and isinstance(data["data"], list):
                 for record in data["data"]:
                     if isinstance(record, list) and len(record) > 0:
-                        # 将第一个元素转换为字符串
-                        record[0] = str(record[0])
+                        try:
+                            record[0] = int(record[0])
+                        except Exception:
+                            print(f"[WARNING] Invalid timestamp format: {record[0]}")
 
         except Exception as e:
             print(f"[ERROR] Response parsing failed: {e}")
@@ -121,15 +123,16 @@ class SteamDTDataCollector(BaseDataCollector):
 
         # Step 4: 比较数据并更新
         new_records = []
-        existing_timestamps = {record[0] for record in old_records}  # 时间戳集合
+        existing_timestamps = {int(record[0]) for record in old_records if isinstance(record, list) and len(record) > 0}
 
-        # Step 4.1: 从 raw_records 中提取新的记录（时间戳更大的）
         for record in raw_records:
-            timestamp = record[0]
-            if timestamp not in existing_timestamps:
-                new_records.append(record)
+            try:
+                timestamp = int(record[0])
+                if timestamp not in existing_timestamps:
+                    new_records.append(record)
+            except Exception:
+                print(f"[WARNING] Invalid timestamp in record: {record}")
 
-        # Step 4.2: 如果没有新的记录，提示用户
         if not new_records:
             print(f"[INFO] No new records to add to {old_path}.")
             return None
@@ -154,4 +157,3 @@ class SteamDTDataCollector(BaseDataCollector):
             return None
 
         return new_records
-

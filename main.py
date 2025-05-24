@@ -2,7 +2,7 @@
 
 from scripts.utils import kline_plotter
 from scripts.data_collector import get_collector
-from scripts.data_analyzer.analyzers import KLineAnalyzer
+from scripts.data_analyzer.steamdt_analyzer import RandomForestRegressorAnalyzer
 
 def collect_data():
     # BUFF 数据采集
@@ -32,7 +32,7 @@ def collect_data():
 if __name__ == "__main__":
     collect_data()
     
-    analyzer = KLineAnalyzer()
+    analyzer = RandomForestRegressorAnalyzer()
     analyzer.load_data("./data/processed/steamdt.json")
     analyzer.train()
     analyzer.predict_test()

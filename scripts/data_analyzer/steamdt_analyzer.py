@@ -1,13 +1,26 @@
 import json
 import pandas as pd
-import plotly.graph_objects as go
-import plotly.io as pio
+import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 
-pio.renderers.default = "browser"
+def create_dataframe_from_json(json_path: str):
+    try:
+        with open(json_path, "r", encoding="utf-8") as f:
+            raw_data = json.load(f)
+    except Exception as e:
+        print(f"[ERROR] Failed to read existing saved data: {e}")
+        return None
+    
+    data = raw_data["data"]
+    df = pd.DataFrame(data, columns=["timestamp", "open", "close", "high", "low", "volume", "turnover"])
+    df["timestamp"] = pd.to_datetime(df["timestamp"].astype(int), unit='s')
+    df["next_close"] = df["close"].shift(-1)
+    df.dropna(inplace=True)
+    
+    return df
 
-class KLineAnalyzer:
+class RandomForestRegressorAnalyzer():
     def __init__(self, n_estimators=100, random_state=42):
         self.model = RandomForestRegressor(n_estimators=n_estimators, random_state=random_state)
         self.df = None
@@ -18,15 +31,7 @@ class KLineAnalyzer:
         self.future_times = []
     
     def load_data(self, json_path: str):
-        with open(json_path, "r", encoding="utf-8") as f:
-            raw_data = json.load(f)
-        
-        data = raw_data["data"]
-        df = pd.DataFrame(data, columns=["timestamp", "open", "close", "high", "low", "volume", "turnover"])
-        df["timestamp"] = pd.to_datetime(df["timestamp"].astype(int), unit='s')
-        df["next_close"] = df["close"].shift(-1)
-        df.dropna(inplace=True)
-        self.df = df
+        self.df = create_dataframe_from_json(json_path=json_path)
     
     def train(self):
         features = ["open", "high", "low", "close", "volume", "turnover"]
@@ -63,42 +68,22 @@ class KLineAnalyzer:
         self.y_pred = self.model.predict(self.X_test)
     
     def plot(self):
-        fig = go.Figure()
-
         full_time = self.df["timestamp"].values
-        
-        # 真实收盘价曲线
-        fig.add_trace(go.Scatter(
-            x=full_time, 
-            y=self.y_true.values, 
-            mode='lines', 
-            name='真实收盘价', 
-            line=dict(color='blue')
-        ))
-        
-        # 测试集预测曲线
         test_time = full_time[self.y_train_len:]
-        fig.add_trace(go.Scatter(
-            x=test_time, 
-            y=self.y_pred, 
-            mode='lines', 
-            name='测试集预测', 
-            line=dict(color='orange')
-        ))
-        
+
+        plt.figure(figsize=(12, 6))
+        # 真实收盘价曲线
+        plt.plot(full_time, self.y_true.values, '-o', label='True close price', color='blue')
+        # 测试集预测曲线
+        plt.plot(test_time, self.y_pred, '-o', label='Test prediction', color='orange')
         # 未来预测曲线
-        fig.add_trace(go.Scatter(
-            x=self.future_times, 
-            y=self.future_preds, 
-            mode='lines+markers', 
-            name='未来预测', 
-            line=dict(color='green', dash='dash')
-        ))
-        
-        fig.update_layout(
-            title="K线预测",
-            xaxis_title="时间",
-            yaxis_title="收盘价",
-            margin=dict(l=40, r=40, t=40, b=40)
-        )
-        fig.show()
+        plt.plot(self.future_times, self.future_preds, label='Prediction', color='green', linestyle='--', marker='o')
+
+        # 图像设置
+        plt.title("K line prediction")
+        plt.xlabel("Time")
+        plt.ylabel("Close price")
+        plt.legend()
+        plt.tight_layout()
+        plt.grid(True)
+        plt.show()

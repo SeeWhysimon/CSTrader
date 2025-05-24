@@ -32,5 +32,5 @@ def collect_data():
 if __name__ == "__main__":
     collect_data()
     
-    analyzer = MachineLearningModel(steps=7)
+    analyzer = MachineLearningModel(steps=14)
     analyzer.run(data_path="./data/processed/steamdt.json")

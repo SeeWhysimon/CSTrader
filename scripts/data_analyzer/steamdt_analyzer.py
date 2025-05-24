@@ -55,7 +55,7 @@ class MachineLearningModel():
 
         # 模型训练
         # Train
-        self.model.fit(X_train, y_train)
+        self.model.fit(X_train, y_train.values.ravel())
 
         # 测试
         # Test

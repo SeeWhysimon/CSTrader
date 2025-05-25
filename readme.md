@@ -21,7 +21,7 @@ For example, to collect data from BUFF:
 
 > ⚠️ The most critical field in the config is the **cookie**.
 
-#### How to Obtain the Cookie
+How to Obtain the Cookie:
 
 1. Open the referer webpage in your browser and press `F12` to open the developer tools.
 2. Navigate to the **Network** tab and filter for `XHR/Fetch` requests.

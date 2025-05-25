@@ -1,6 +1,8 @@
 data/processed/*.json
 data/raw/*.json
 
+*.csv
+
 scripts/data_collector/buff/buff_config.json
 scripts/data_collector/steamdt/steamdt_config.json
 

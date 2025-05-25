@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score 
 
-def create_dataframe_from_json(json_path: str):
+def create_dataframe_from_json(json_path: str, save_csv=True):
     # 读取json文件
     # Read json file
     try:
@@ -35,6 +35,11 @@ def create_dataframe_from_json(json_path: str):
                  "ma7", "ma14", "ma21", "ma42"]
     # [ALERT] 需要完善 (多个特征)
     target = ["next_close"]
+
+    if save_csv:
+        file_name = "./data/processed/steamdt.csv"
+        df.to_csv(file_name, index=False)
+        print(f"[INFO] CSV file saved: {file_name}")
     
     return df, features, target
 
@@ -42,8 +47,6 @@ class MachineLearningModel():
     def __init__(self, steps: int=7):
         self.model = RandomForestRegressor(n_estimators=100, random_state=42)
         self.steps = steps
-        self.X = None
-        self.y = None
 
     def run(self, data_path: str):
         # 数据准备

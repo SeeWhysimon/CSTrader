@@ -60,7 +60,7 @@ class BuffDataCollector(BaseDataCollector):
         try:
             with open(save_path_with_timestamp, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
-            print(f"BUFF data saved: {save_path_with_timestamp}")
+            print(f"[INFO] BUFF data saved: {save_path_with_timestamp}")
         except Exception as e:
             print(f"[ERROR] Failed to save data to {save_path_with_timestamp}: {e}")
             return None
@@ -118,7 +118,7 @@ class BuffDataCollector(BaseDataCollector):
             # 如果有新的数据，追加到现有数据
             if new_entries:
                 existing_data.extend(new_entries)
-                print(f"Added {len(new_entries)} new entries to existing data.")
+                print(f"[INFO] Added {len(new_entries)} new entries to existing data.")
             else:
                 print("[INFO] No new entries to add.")
 
@@ -131,7 +131,7 @@ class BuffDataCollector(BaseDataCollector):
         try:
             with open(save_path, "w", encoding="utf-8") as f:
                 json.dump(existing_data, f, ensure_ascii=False, indent=2)
-            print(f"Cleaned and saved: {save_path}")
+            print(f"[INFO] Cleaned and saved: {save_path}")
         except Exception as e:
             print(f"[ERROR] Failed to save cleaned data to {save_path}: {e}")
             return None

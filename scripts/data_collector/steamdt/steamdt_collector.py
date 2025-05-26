@@ -70,7 +70,7 @@ class SteamDTDataCollector(BaseDataCollector):
         try:
             with open(save_path_with_timestamp, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
-            print(f"SteamDT data saved: {save_path_with_timestamp}")
+            print(f"[INFO] SteamDT data saved: {save_path_with_timestamp}")
         except Exception as e:
             print(f"[ERROR] Failed to save data to {save_path_with_timestamp}: {e}")
             return None
@@ -151,7 +151,7 @@ class SteamDTDataCollector(BaseDataCollector):
                     "errorData": None,
                     "errorCodeStr": None
                 }, f, ensure_ascii=False, indent=2)
-            print(f"Data successfully appended and saved to {old_path}")
+            print(f"[INFO] Data successfully appended and saved to {old_path}")
         except Exception as e:
             print(f"[ERROR] Failed to save updated data to {old_path}: {e}")
             return None

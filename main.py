@@ -31,6 +31,14 @@ def collect_data():
 
 if __name__ == "__main__":
     collect_data()
+
+    steamdt_analyzer_params = {
+        'max_depth': None, 
+        'max_features': 19, 
+        'min_samples_split': 7, 
+        'n_estimators': 50
+    }
     
     analyzer = MachineLearningModel(steps=14)
-    analyzer.run(data_path="./data/processed/steamdt.json")
+    analyzer.run(data_path="./data/processed/steamdt.json", 
+                 params=steamdt_analyzer_params)

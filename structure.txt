@@ -2,9 +2,12 @@
 │   ├── raw/                         # 原始数据
 │   └── processed/                   # 处理后的数据
 │
+├── figs/                            # 存储readme文档所需的图片
+│
+├── main.py                          # 主执行脚本，可调用各模块
+│
 ├── scripts/                         # 所有脚本代码
 │   ├── __init__.py
-│   ├── main.py                      # 主执行脚本，可调用各模块
 │   ├── utils.py                     # 工具函数
 │   │
 │   ├── data_collector/              # 统一管理所有数据获取逻辑
@@ -12,7 +15,8 @@
 │   │   ├── base.py                  # 定义DataCollector基类
 │   │   ├── buff/                    # Buff数据抓取逻辑
 │   │   │   ├── __init__.py
-│   │   │   └── buff_collector.py    # 实现Buff数据的抓取
+│   │   │   ├── buff_collector.py    # 实现Buff数据的抓取
+│   │   │   └── buff_config.json     # buff_collector的配置文件
 │   │   └── [other_source]/          # 可添加更多数据源
 │   │
 │   └── data_analyzer/               # 模型训练与预测脚本
@@ -20,4 +24,6 @@
 │       └── pred.py
 │
 ├── requirements.txt                 # 项目依赖
+├── .gitignore
+├── LICENCE
 └── README.md

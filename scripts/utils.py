@@ -47,6 +47,16 @@ def get_json_response(url, params=None, headers=None, proxies=None, timeout=10):
     except Exception as e:
         print(f"[ERROR] Failed to get JSON from {url}: {e}")
         return None
+    
+def load_dataframe_from_json(json_path: str):
+    raw_data = load_json(json_path=json_path)
+    
+    data = raw_data["data"]
+    df = pd.DataFrame(data, columns=["timestamp", "open", "close", "high", "low", "volume", "turnover"])
+    
+    # Convert the data type of ["timestamp"] to int
+    df["timestamp"] = pd.to_datetime(df["timestamp"].astype(int), unit='s')
+    return df
 
 def kline_plotter(data_path: str):
     # 设置 Plotly 渲染器为浏览器

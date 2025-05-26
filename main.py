@@ -34,6 +34,7 @@ if __name__ == "__main__":
         'n_estimators': 50
     }
     
-    analyzer = MachineLearningModel(steps=14)
+    analyzer = MachineLearningModel()
     analyzer.run(data_path="./data/processed/steamdt.json", 
-                 params=steamdt_analyzer_params)
+                 params=steamdt_analyzer_params, 
+                 steps=14)

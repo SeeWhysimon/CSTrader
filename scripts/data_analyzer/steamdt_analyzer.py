@@ -1,30 +1,20 @@
-import json
 import pandas as pd
 import matplotlib.pyplot as plt
-from scripts.data_processor.features import add_moving_averages
+
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import mean_squared_error, r2_score 
+from sklearn.model_selection import train_test_split, GridSearchCV
+
+from scripts.utils import load_dataframe_from_json
+from scripts.data_processor.features import add_moving_averages
 
 def create_dataframe_from_json(json_path: str, csv_save_path: str = None):
     # 读取json文件
     # Read json file
-    try:
-        with open(json_path, "r", encoding="utf-8") as f:
-            raw_data = json.load(f)
-    except Exception as e:
-        print(f"[ERROR] Failed to read existing saved data: {e}")
-        return None
-    
-    # 创建DataFrame
-    # Create DataFrame
-    data = raw_data["data"]
-    df = pd.DataFrame(data, 
-                      columns=["timestamp", "open", "close", "high", "low", "volume", "turnover"])
-    
+    df = load_dataframe_from_json(json_path=json_path)
+
     # 数据处理
     # Data process
-    df["timestamp"] = pd.to_datetime(df["timestamp"].astype(int), unit='s')
     df = add_moving_averages(df, [7, 14, 21, 42])
     df["next_close"] = df["close"].shift(-1)
     df.dropna(inplace=True)
@@ -41,9 +31,8 @@ def create_dataframe_from_json(json_path: str, csv_save_path: str = None):
     return df, features, target
 
 class MachineLearningModel():
-    def __init__(self, steps: int=7):
+    def __init__(self):
         self.model = RandomForestRegressor()
-        self.steps = steps
 
     def find_best_params(self, X_train, y_train, param_grid=None):
         if param_grid is None:
@@ -66,7 +55,7 @@ class MachineLearningModel():
 
         return grid_search.best_params_
 
-    def run(self, data_path: str, params=None):
+    def run(self, data_path: str, params=None, steps=7):
         # 数据准备
         # Data preparation
         df, features, target = create_dataframe_from_json(json_path=data_path,
@@ -93,7 +82,7 @@ class MachineLearningModel():
         last_features = X.iloc[-1].copy()
         future_preds  = []
 
-        for _ in range(self.steps):
+        for _ in range(steps):
             pred = self.model.predict(pd.DataFrame([last_features]))[0]
             future_preds.append(pred)
 
@@ -106,7 +95,7 @@ class MachineLearningModel():
             last_features["turnover"] *= 0.95
         
         last_time = df["timestamp"].iloc[-1]
-        future_times = [last_time + pd.Timedelta(days=i+1) for i in range(self.steps)]
+        future_times = [last_time + pd.Timedelta(days=i+1) for i in range(steps)]
 
         # 绘图
         # Plot

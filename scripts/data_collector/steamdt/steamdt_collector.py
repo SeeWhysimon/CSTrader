@@ -4,6 +4,7 @@ import requests
 import json
 import os
 from datetime import datetime
+from scripts.utils import load_config, get_json_response
 from scripts.data_collector.base import BaseDataCollector
 
 class SteamDTDataCollector(BaseDataCollector):
@@ -15,53 +16,19 @@ class SteamDTDataCollector(BaseDataCollector):
         """从配置文件中读取url/params/headers进行采集"""
 
         # Step 1: 加载配置文件
-        try:
-            with open(config_path, "r", encoding="utf-8") as f:
-                config = json.load(f)
-        except Exception as e:
-            print(f"[ERROR] Failed to read config: {e}")
-            return None
+        url, params, headers = load_config(config_path, self.debug)
 
-        url = config.get("url")
-        params = config.get("params", {})
-        headers = config.get("headers", {})
+        # Step 2: 发起请求并解析响应
+        data = get_json_response(url, params, headers, self.proxies)
 
-        if not url:
-            print("[ERROR] Config missing required field: 'url'")
-            return None
-
-        if self.debug:
-            print(f"[DEBUG] URL: {url}")
-            print(f"[DEBUG] Params: {params}")
-            print(f"[DEBUG] Headers: {headers}")
-
-        # Step 2: 发起请求
-        try:
-            response = requests.get(url, params=params, headers=headers, proxies=self.proxies)
-            response.raise_for_status()
-        except Exception as e:
-            print(f"[ERROR] Request failed: {e}")
-            return None
-
-        # Step 3: 解析响应
-        try:
-            data = response.json()
-            if not isinstance(data, dict):
-                print("[ERROR] Unexpected response format (not a dict)")
-                return None
-
-            # 转换时间戳字段为 int
-            if "data" in data and isinstance(data["data"], list):
-                for record in data["data"]:
-                    if isinstance(record, list) and len(record) > 0:
-                        try:
-                            record[0] = int(record[0])
-                        except Exception:
-                            print(f"[WARNING] Invalid timestamp format: {record[0]}")
-
-        except Exception as e:
-            print(f"[ERROR] Response parsing failed: {e}")
-            return None
+        # Step 3: 转换时间戳字段为 int
+        if "data" in data and isinstance(data["data"], list):
+            for record in data["data"]:
+                if isinstance(record, list) and len(record) > 0:
+                    try:
+                        record[0] = int(record[0])
+                    except Exception:
+                        print(f"[WARNING] Invalid timestamp format: {record[0]}")
 
         # Step 4: 保存数据
         timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")

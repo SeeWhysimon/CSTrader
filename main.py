@@ -7,14 +7,9 @@ from scripts.data_analyzer.steamdt_analyzer import MachineLearningModel
 def collect_data():
     # BUFF 数据采集
     buff_collector = get_collector("buff")
-    _, buff_raw_path = buff_collector.collect(
-        config_path="./scripts/data_collector/buff/buff_config.json",
-        save_path="./data/raw/buff"
-    )
-    buff_collector.clean(
-        raw_path=buff_raw_path, 
-        save_path="./data/processed/buff.json"
-    )
+    buff_collector.run(config_path="./scripts/data_collector/buff/buff_config.json", 
+                       raw_save_path="./data/raw/buff", 
+                       cleaned_save_path="./data/processed/buff.json")
 
     # SteamDT 数据采集
     steamdt_collector = get_collector("steamdt")

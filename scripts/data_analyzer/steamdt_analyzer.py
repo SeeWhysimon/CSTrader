@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
+from scripts.data_processor.features import add_moving_averages
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import mean_squared_error, r2_score 
@@ -17,17 +18,14 @@ def create_dataframe_from_json(json_path: str, csv_save_path: str = None):
     
     # 创建DataFrame
     # Create DataFrame
-    cols = ["timestamp", "open", "close", "high", "low", "volume", "turnover"]
     data = raw_data["data"]
-    df = pd.DataFrame(data, columns=cols)
+    df = pd.DataFrame(data, 
+                      columns=["timestamp", "open", "close", "high", "low", "volume", "turnover"])
     
     # 数据处理
     # Data process
     df["timestamp"] = pd.to_datetime(df["timestamp"].astype(int), unit='s')
-    df["ma7"] = df["close"].rolling(window=7).mean()
-    df["ma14"] = df["close"].rolling(window=14).mean()
-    df["ma21"] = df["close"].rolling(window=21).mean()
-    df["ma42"] = df["close"].rolling(window=42).mean()
+    df = add_moving_averages(df, [7, 14, 21, 42])
     df["next_close"] = df["close"].shift(-1)
     df.dropna(inplace=True)
 

@@ -2,7 +2,7 @@
 
 from scripts.data_processor.plotter import kline_plotter
 from scripts.data_collector import get_collector
-from scripts.data_analyzer.steamdt_analyzer import MachineLearningModel
+from scripts.data_analyzer.steamdt_analyzer import random_forest_model
 
 def collect_data():
     # BUFF 数据采集
@@ -34,7 +34,7 @@ if __name__ == "__main__":
         'n_estimators': 50
     }
     
-    analyzer = MachineLearningModel()
+    analyzer = random_forest_model()
     analyzer.run(data_path="./data/processed/steamdt.json", 
                  params=steamdt_analyzer_params, 
                  steps=14)

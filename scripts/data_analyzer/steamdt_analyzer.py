@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 
 from sklearn.ensemble import RandomForestRegressor
@@ -8,29 +9,7 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 from scripts.data_processor.loader import load_dataframe_from_json
 from scripts.data_processor.features import add_moving_averages
 
-def create_dataframe_from_json(json_path: str, csv_save_path: str = None):
-    # 读取json文件
-    # Read json file
-    df = load_dataframe_from_json(json_path=json_path)
-
-    # 数据处理
-    # Data process
-    df = add_moving_averages(df, [7, 14, 21, 42])
-    df["next_close"] = df["close"].shift(-1)
-    df.dropna(inplace=True)
-
-    features  = ["open", "close", "high", "low", "volume", "turnover",
-                 "ma7", "ma14", "ma21", "ma42"]
-    # [ALERT] 需要完善 (多个特征)
-    target = ["next_close"]
-
-    if csv_save_path:
-        df.to_csv(csv_save_path, index=False)
-        print(f"[INFO] CSV file saved: {csv_save_path}")
-    
-    return df, features, target
-
-class MachineLearningModel():
+class random_forest_model():
     def __init__(self):
         self.model = RandomForestRegressor()
 
@@ -54,11 +33,33 @@ class MachineLearningModel():
         print(f"Best score: {grid_search.best_score_}")
 
         return grid_search.best_params_
+    
+    def create_dataframe_from_json(self, json_path: str, csv_save_path: str = None):
+        # 读取json文件
+        # Read json file
+        df = load_dataframe_from_json(json_path=json_path)
 
-    def run(self, data_path: str, params=None, steps=7):
+        # 数据处理
+        # Data process
+        df = add_moving_averages(df, [7, 14, 21, 42])
+        df["next_close"] = df["close"].shift(-1)
+        df.dropna(inplace=True)
+
+        features  = ["open", "close", "high", "low", "volume", "turnover",
+                    "ma7", "ma14", "ma21", "ma42"]
+        # [ALERT] 需要完善 (多个特征)
+        target = ["next_close"]
+
+        if csv_save_path:
+            df.to_csv(csv_save_path, index=False)
+            print(f"[INFO] CSV file saved: {csv_save_path}")
+        
+        return df, features, target
+
+    def run(self, data_path: str, params=None, param_grid=None, steps=7):
         # 数据准备
         # Data preparation
-        df, features, target = create_dataframe_from_json(json_path=data_path,
+        df, features, target = self.create_dataframe_from_json(json_path=data_path,
                                                           csv_save_path="./data/processed/steamdt.csv")
         X = df[features]
         y = df[target]
@@ -68,6 +69,10 @@ class MachineLearningModel():
         # Train
         if params:
             self.model.set_params(**params)
+
+        best_params = self.find_best_params(X_train=X_train, y_train=y_train.values.ravel(), param_grid=param_grid)
+        self.model.set_params(**best_params)
+        
         self.model.fit(X_train, y_train.values.ravel())
 
         # 测试
@@ -118,11 +123,39 @@ class MachineLearningModel():
         plt.grid(True)
         plt.show()
 
-if __name__ == "__main__":
-    df, features, target = create_dataframe_from_json(json_path="../../data/processed/steamdt.json")
-    X = df[features]
-    y = df[target]
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, shuffle=False, test_size=0.2)
-    model = MachineLearningModel()
-    model.find_best_params(X_train=X_train, y_train=y_train.values.ravel())
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+
+from scripts.data_processor.checker import check_stationary
+
+class arima_model():
+    def __init__(self):
+        pass
+
+    def plot_acf_pacf(self, series, lags=20):
+        _, ax = plt.subplots(2, 1, figsize=(10, 8))
+        plot_pacf(series, lags=lags, ax=ax[0])
+        ax[0].set_title('PACF Plot')
+        plot_acf(series, lags=lags, ax=ax[1])
+        ax[1].set_title('ACF Plot')
+        plt.tight_layout()
+        plt.show()
+
+    def run(self, df: pd.DataFrame, target: str, steps: int = 7, verbose=False):
+        series = df[target].dropna()
+        d = check_stationary(series=series)
+
+        self.plot_acf_pacf(series=series, lags=50)
+
+        order = (1, d, 1)
+        model = ARIMA(series, order=order)
+
+        model_fit = model.fit()
+        # 模型摘要
+        if verbose:
+            print(model_fit.summary())
+        # 预测未来 N 步
+        forecast = model_fit.forecast(steps=steps)
+        print("[RESULT] Forecast")
+        print(forecast)

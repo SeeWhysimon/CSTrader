@@ -1,6 +1,6 @@
 import json
 import os
-from scripts.utils import load_json
+from scripts.data_processor.loader import load_json
 
 def clean_buff_data(raw_path: str, 
                     save_path: str):

@@ -2,9 +2,11 @@
 
 import requests
 import json
+
 from datetime import datetime
-from scripts.utils import get_json_response, load_config
-from scripts.data_processor.cleaning import clean_buff_data
+
+from scripts.data_processor.loader import get_json_response, load_config
+from scripts.data_processor.cleaner import clean_buff_data
 from scripts.data_collector.base import BaseDataCollector
 
 class BuffDataCollector(BaseDataCollector):

@@ -3,8 +3,10 @@
 import requests
 import json
 import os
+
 from datetime import datetime
-from scripts.utils import load_config, get_json_response
+
+from scripts.data_processor.loader import load_config, get_json_response
 from scripts.data_collector.base import BaseDataCollector
 
 class SteamDTDataCollector(BaseDataCollector):

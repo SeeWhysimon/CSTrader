@@ -1,8 +1,6 @@
 import json
 import requests
 import pandas as pd
-import plotly.graph_objects as go
-import plotly.io as pio
 
 def load_json(json_path: str):
     try:
@@ -30,7 +28,7 @@ def load_config(config_path: str,
         print(f"[DEBUG] Headers: {headers}")
 
     return url, params, headers
-    
+
 def get_json_response(url, params=None, headers=None, proxies=None, timeout=10):
     try:
         response = requests.get(url=url, 
@@ -56,36 +54,6 @@ def load_dataframe_from_json(json_path: str):
     
     # Convert the data type of ["timestamp"] to int
     df["timestamp"] = pd.to_datetime(df["timestamp"].astype(int), unit='s')
-    return df
-
-def kline_plotter(data_path: str):
-    # 设置 Plotly 渲染器为浏览器
-    pio.renderers.default = 'browser'
-
-    raw_data = load_json(data_path)
-
-    data = raw_data["data"]
-    df = pd.DataFrame(data, columns=["timestamp", "open", "close", "high", "low", "volume", "turnover"])
-    df["time"] = pd.to_datetime(df["timestamp"].astype(int), unit='s')
-    df = df.sort_values("time")
     
-    # 绘制 K 线图
-    fig = go.Figure(data=[
-        go.Candlestick(
-            x=df["time"],
-            open=df["open"],
-            high=df["high"],
-            low=df["low"],
-            close=df["close"],
-            name="K线"
-        )
-    ])
-
-    fig.update_layout(
-        title="BUFF 历史 K 线图",
-        xaxis_title="时间",
-        yaxis_title="价格",
-        xaxis_rangeslider_visible=False
-    )
-
-    fig.show()
+    df = df.sort_values("timestamp")
+    return df

@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, r2_score 
 from sklearn.model_selection import train_test_split, GridSearchCV
 
-from scripts.utils import load_dataframe_from_json
+from scripts.data_processor.loader import load_dataframe_from_json
 from scripts.data_processor.features import add_moving_averages
 
 def create_dataframe_from_json(json_path: str, csv_save_path: str = None):

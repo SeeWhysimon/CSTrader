@@ -5,15 +5,12 @@ import json
 
 from datetime import datetime
 
-from scripts.data_processor.loader import get_json_response, load_config
-from scripts.data_processor.process import clean_buff_data
-from scripts.data_collector.base import BaseDataCollector
+from scripts.DataProcessor.loader import get_json_response, load_config
+from scripts.DataProcessor.process import clean_buff_data
+from scripts.DataCollector.base import BaseDataCollector
 
 class BuffDataCollector(BaseDataCollector):
-    def __init__(self, proxies=None, debug=False):
-        self.proxies = proxies or {}
-        self.debug = debug
-
+    # 后续删除, 添加到Pipeline当中
     def run(self, 
             config_path: str, 
             raw_save_path: str, 
@@ -27,18 +24,14 @@ class BuffDataCollector(BaseDataCollector):
             clean_buff_data(raw_path=buff_raw_path, 
                             save_path=cleaned_save_path)
 
-    def collect(self, config_path: str, save_path: str):
+    def collect(self, config_path: str, save_path: str, debug: bool = False):
         """从 JSON 配置文件读取参数，采集 BUFF 数据并保存"""
 
         # Step 1: 加载配置文件
-        url, params, headers = load_config(config_path=config_path, 
-                                                debug=self.debug)
+        self.load_config(config_path=config_path, debug=debug)
 
         # Step 2: 发起请求并解析
-        json_data = get_json_response(url=url, 
-                          params=params, 
-                          headers=headers, 
-                          proxies=self.proxies)
+        json_data = self.get_json_response()
 
         # Step 4: 保存数据，并加上时间戳
         timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")

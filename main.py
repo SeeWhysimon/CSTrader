@@ -1,20 +1,20 @@
 # scripts/main.py
 
-from scripts.data_processor.plotter import kline_plotter
-from scripts.data_collector import get_collector
+from scripts.DataProcessor.plotter import kline_plotter
+from scripts.DataCollector import get_collector
 from scripts.data_analyzer.steamdt_analyzer import random_forest_model
 
 def collect_data():
     # BUFF 数据采集
     buff_collector = get_collector("buff")
-    buff_collector.run(config_path="./scripts/data_collector/buff/buff_config.json", 
+    buff_collector.run(config_path="./scripts/DataCollector/buff/buff_config.json", 
                        raw_save_path="./data/raw/buff", 
                        cleaned_save_path="./data/processed/buff.json")
 
     # SteamDT 数据采集
     steamdt_collector = get_collector("steamdt")
     _, steamdt_raw_path = steamdt_collector.collect(
-        config_path="./scripts/data_collector/steamdt/steamdt_config.json",
+        config_path="./scripts/DataCollector/steamdt/steamdt_config.json",
         save_path="./data/raw/steamdt"
     )
     steamdt_collector.append_data(

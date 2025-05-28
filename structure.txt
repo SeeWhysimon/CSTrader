@@ -27,3 +27,6 @@
 ├── .gitignore
 ├── LICENCE
 └── README.md
+
+
+数据加载(DataCollctor) -> 特征工程(DataProcessor) -> 模型训练(ModelTrainer) -> 预测(Predictor) -> (评估) -> 可视化(Visualizer)

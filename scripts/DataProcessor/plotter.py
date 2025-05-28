@@ -4,13 +4,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from scripts.data_processor.loader import load_dataframe_from_json
+from scripts.DataProcessor.loader import load_steamdt_json
 
 def kline_plotter(data_path: str):
     # 设置 Plotly 渲染器为浏览器
     pio.renderers.default = 'browser'
 
-    df = load_dataframe_from_json(json_path=data_path)
+    df = load_steamdt_json(json_path=data_path)
     
     # 绘制 K 线图
     fig = go.Figure(data=[

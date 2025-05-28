@@ -46,7 +46,25 @@ def get_json_response(url, params=None, headers=None, proxies=None, timeout=10):
         print(f"[ERROR] Failed to get JSON from {url}: {e}")
         return None
     
-def load_dataframe_from_json(json_path: str):
+def load_steamdt_json(json_path: str) -> pd.DataFrame:
+    """
+    Load and parse a JSON file containing SteamDT time series data into a pandas DataFrame.
+
+    Args:
+        json_path (str): Path to the SteamDT JSON file.
+
+    Returns:
+        pd.DataFrame: A DataFrame with columns:
+            - 'timestamp' (datetime): Converted from Unix timestamp (seconds).
+            - 'open' (float)
+            - 'close' (float)
+            - 'high' (float)
+            - 'low' (float)
+            - 'volume' (float or int)
+            - 'turnover' (float)
+
+        The DataFrame is sorted in ascending order by 'timestamp'.
+    """
     raw_data = load_json(json_path=json_path)
     
     data = raw_data["data"]

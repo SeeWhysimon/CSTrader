@@ -6,8 +6,8 @@ import os
 
 from datetime import datetime
 
-from scripts.data_processor.loader import load_config, get_json_response
-from scripts.data_collector.base import BaseDataCollector
+from scripts.DataProcessor.loader import load_config, get_json_response
+from scripts.DataCollector.base import BaseDataCollector
 
 class SteamDTDataCollector(BaseDataCollector):
     def __init__(self, proxies=None, debug=False):

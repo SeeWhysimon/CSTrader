@@ -2,22 +2,18 @@ import plotly.graph_objects as go
 import plotly.io as pio
 import pandas as pd
 
-from scripts.DataProcessor.loader import load_steamdt_json
-
-def kline_plotter(data_path: str):
+def visualize_kline(data: pd.DataFrame):
     # 设置 Plotly 渲染器为浏览器
     pio.renderers.default = 'browser'
-
-    df = load_steamdt_json(json_path=data_path)
     
     # 绘制 K 线图
     fig = go.Figure(data=[
         go.Candlestick(
-            x=df["timestamp"],
-            open=df["open"],
-            high=df["high"],
-            low=df["low"],
-            close=df["close"],
+            x=data["timestamp"],
+            open=data["open"],
+            high=data["high"],
+            low=data["low"],
+            close=data["close"],
             name="K线"
         )
     ])

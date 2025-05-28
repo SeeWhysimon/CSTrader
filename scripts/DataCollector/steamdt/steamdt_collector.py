@@ -1,31 +1,25 @@
 # scripts/data_collector/steamdt/steamdt_collector.py
 
-import requests
 import json
 import os
 
 from datetime import datetime
 
-from scripts.DataProcessor.loader import load_config, get_json_response
 from scripts.DataCollector.base import BaseDataCollector
 
 class SteamDTDataCollector(BaseDataCollector):
-    def __init__(self, proxies=None, debug=False):
-        self.proxies = proxies or {}
-        self.debug = debug
-
     def collect(self, config_path: str, save_path: str):
         """从配置文件中读取url/params/headers进行采集"""
 
         # Step 1: 加载配置文件
-        url, params, headers = load_config(config_path, self.debug)
+        self.load_config(config_path, self.debug)
 
         # Step 2: 发起请求并解析响应
-        data = get_json_response(url, params, headers, self.proxies)
+        json_data = self.get_json_response()
 
         # Step 3: 转换时间戳字段为 int
-        if "data" in data and isinstance(data["data"], list):
-            for record in data["data"]:
+        if "data" in json_data and isinstance(json_data["data"], list):
+            for record in json_data["data"]:
                 if isinstance(record, list) and len(record) > 0:
                     try:
                         record[0] = int(record[0])
@@ -38,13 +32,13 @@ class SteamDTDataCollector(BaseDataCollector):
 
         try:
             with open(save_path_with_timestamp, "w", encoding="utf-8") as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
+                json.dump(json_data, f, ensure_ascii=False, indent=2)
             print(f"[INFO] SteamDT data saved: {save_path_with_timestamp}")
         except Exception as e:
             print(f"[ERROR] Failed to save data to {save_path_with_timestamp}: {e}")
             return None
 
-        return data, save_path_with_timestamp
+        return json_data, save_path_with_timestamp
 
     def append_data(self, old_path: str, raw_path: str):
         # Step 1: 检查旧数据文件是否存在

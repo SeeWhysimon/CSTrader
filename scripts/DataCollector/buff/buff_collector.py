@@ -1,11 +1,9 @@
 # scripts/data_collector/buff/buff_collector.py
 
-import requests
 import json
 
 from datetime import datetime
 
-from scripts.DataProcessor.loader import get_json_response, load_config
 from scripts.DataProcessor.process import clean_buff_data
 from scripts.DataCollector.base import BaseDataCollector
 

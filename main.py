@@ -1,7 +1,7 @@
 # scripts/main.py
 
 from scripts.DataProcessor.plotter import kline_plotter
-from scripts.DataCollector import get_collector
+from scripts.data_collector import get_collector
 from scripts.data_analyzer.steamdt_analyzer import random_forest_model
 
 def collect_data():

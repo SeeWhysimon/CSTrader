@@ -5,7 +5,7 @@ import os
 
 from datetime import datetime
 
-from scripts.DataCollector.base import BaseDataCollector
+from scripts.data_collector.base import BaseDataCollector
 
 class SteamDTDataCollector(BaseDataCollector):
     def collect(self, config_path: str, save_path: str):

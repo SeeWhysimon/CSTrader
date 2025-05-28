@@ -1,7 +1,7 @@
 # scripts/data_collector/__init__.py
 
-from scripts.DataCollector.buff.buff_collector import BuffDataCollector
-from scripts.DataCollector.steamdt.steamdt_collector import SteamDTDataCollector
+from scripts.data_collector.buff.buff_collector import BuffDataCollector
+from scripts.data_collector.steamdt.steamdt_collector import SteamDTDataCollector
 # 后续你可以继续添加其他数据源
 
 def get_collector(source: str):

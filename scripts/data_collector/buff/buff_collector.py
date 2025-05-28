@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 
 from scripts.DataProcessor.process import clean_buff_data
-from scripts.DataCollector.base import BaseDataCollector
+from scripts.data_collector.base import BaseDataCollector
 
 class BuffDataCollector(BaseDataCollector):
     # 后续删除, 添加到Pipeline当中

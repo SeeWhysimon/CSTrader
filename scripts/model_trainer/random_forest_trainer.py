@@ -2,7 +2,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_squared_error, r2_score
 
-from scripts.ModelTrainer.base import BaseTrainer
+from scripts.model_trainer.base import BaseTrainer
 
 class RandomForestTrainer(BaseTrainer):
     def __init__(self):

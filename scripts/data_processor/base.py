@@ -5,11 +5,3 @@ class BaseDataProcessor(ABC):
     @abstractmethod
     def load_data(self, path: str) -> pd.DataFrame:
         ...
-
-    @abstractmethod
-    def add_features(self, df: pd.DataFrame) -> pd.DataFrame:
-        ...
-
-    @abstractmethod
-    def prepare_data(self, df: pd.DataFrame) -> tuple:
-        ...

@@ -4,24 +4,9 @@ import json
 
 from datetime import datetime
 
-from scripts.data_processor.process import clean_buff_data
 from scripts.data_collector.base import BaseDataCollector
 
 class BuffDataCollector(BaseDataCollector):
-    # 后续删除, 添加到Pipeline当中
-    def run(self, 
-            config_path: str, 
-            raw_save_path: str, 
-            cleaned_save_path: str):
-        # Step 1: 获取原始数据
-        _, buff_raw_path = self.collect(config_path=config_path, 
-                     save_path=raw_save_path)
-        
-        # Step 2: 清洗BUFF数据
-        if cleaned_save_path:
-            clean_buff_data(raw_path=buff_raw_path, 
-                            save_path=cleaned_save_path)
-
     def collect(self, config_path: str, save_path: str, debug: bool = False):
         """从 JSON 配置文件读取参数，采集 BUFF 数据并保存"""
 

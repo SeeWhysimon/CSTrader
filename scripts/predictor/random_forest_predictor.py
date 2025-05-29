@@ -1,4 +1,6 @@
 import pandas as pd
+
+from typing import Tuple
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_squared_error, r2_score
@@ -29,21 +31,42 @@ class RandomForestPredictor():
     def train(self, X_train, y_train):
         self.model.fit(X_train, y_train)
         return self.model
-    
-    def predict(self, X: pd.DataFrame, steps: int = 1) -> pd.DataFrame:
-        preds = []
-        last_record = X.copy()
+
+    def predict(self, X: pd.DataFrame, y: pd.DataFrame, steps: int = 1) -> Tuple[pd.DataFrame, pd.DataFrame]:
+        X_history = X.copy()
+        y_history = y.copy()
+
+        label_to_feature = {
+            'next_open': 'open',
+            'next_high': 'high',
+            'next_low': 'low',
+            'next_close': 'close',
+            'next_volume': 'volume',
+            'next_turnover': 'turnover'
+        }
 
         for _ in range(steps):
-            pred = self.model.predict(last_record)[0]
-            preds.append(pred)
+            ma = pd.DataFrame([{
+                "ma7": y_history["next_close"].tail(7).mean(),
+                "ma14": y_history["next_close"].tail(14).mean(),
+                "ma21": y_history["next_close"].tail(21).mean(),
+                "ma42": y_history["next_close"].tail(42).mean()
+            }])
 
-            last_record = pd.DataFrame([pred], columns=last_record.columns)
+            current_y = y_history.iloc[[-1]].copy()
+            print(current_y)
+            current_y.rename(columns=label_to_feature, inplace=True)
+            current = pd.concat([current_y.reset_index(drop=True), ma], axis=1)
 
-        result = pd.DataFrame(preds, columns=X.columns)
-        return result
+            pred = self.model.predict(current)
+            pred_df = pd.DataFrame(pred, columns=y.columns)
+            X_history = pd.concat([X_history, current], axis=0, ignore_index=True)
+            y_history = pd.concat([y_history, pred_df], axis=0, ignore_index=True)
 
-    def eval(self, y_test, y_pred):
+        return X_history[-steps:], y_history[-steps:]
+
+    def eval(self, X_test, y_test):
+        y_pred = self.model.predict(X_test)
         return {
             "mse": mean_squared_error(y_test, y_pred, multioutput='raw_values'),
             "r2": r2_score(y_test, y_pred, multioutput='raw_values')

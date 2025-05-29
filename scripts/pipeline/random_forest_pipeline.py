@@ -1,3 +1,5 @@
+import pandas as pd
+
 from sklearn.model_selection import train_test_split
 
 from scripts.data_collector.steamdt.steamdt_collector import SteamDTDataCollector
@@ -30,10 +32,18 @@ class RandomForestPipeline:
         y = df[targets]
         X_train, X_test, y_train, y_test = train_test_split(X, y, shuffle=False, test_size=0.2)
 
-        model = self.predictor.train(X_train=X_train, y_train=y_train)
-        y_pred = self.predictor.predict(X=X_test)
-        result = self.predictor.eval(y_test=y_test, y_pred=y_pred)
-        print(f"[RESULT]: {result}")
+        self.predictor.train(X_train=X_train, y_train=y_train)
 
+        test_result = self.predictor.eval(X_test=X_test, y_test=y_test)
+        print(f"[RESULT]: {test_result}")
 
+        steps = 7
+        last_time = df["timestamp"].iloc[-1]
+        future_times = [last_time + pd.Timedelta(days=i+1) for i in range(steps)]
+        X_preds, y_preds = self.predictor.predict(X=X, y=y, steps=steps)
+        
+        future_times = pd.DataFrame(future_times, columns=["timestamp"])
+        preds = pd.concat([future_times, X_preds.reset_index(drop=True)], axis=1)
+        print(preds)
+        visualize_kline(preds)
 

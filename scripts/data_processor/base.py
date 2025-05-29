@@ -11,5 +11,5 @@ class BaseDataProcessor(ABC):
         ...
 
     @abstractmethod
-    def prepare_dataset(self, df: pd.DataFrame) -> tuple:
+    def prepare_data(self, df: pd.DataFrame) -> tuple:
         ...

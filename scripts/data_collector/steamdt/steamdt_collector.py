@@ -13,7 +13,7 @@ class SteamDTDataCollector(BaseDataCollector):
         """从配置文件中读取url/params/headers进行采集"""
 
         # Step 1: 加载配置文件
-        self.load_config(config_path, self.debug)
+        self.load_config(config_path)
 
         # Step 2: 发起请求并解析响应
         json_data = self.get_json_response()

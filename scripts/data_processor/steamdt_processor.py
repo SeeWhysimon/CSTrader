@@ -40,12 +40,12 @@ class SteamDTDataProcessor(BaseDataProcessor):
         
         return df, features, target
     
-    def append_data(self, raw_path: str, save_path: str) -> Dict:
+    def append_data(self, json_raw_path: str, json_save_path: str) -> Dict:
         # Step 1: 检查旧数据文件是否存在
-        if not os.path.exists(save_path):
-            print(f"[WARNING] {save_path} does not exist. Creating an empty file.")
+        if not os.path.exists(json_save_path):
+            print(f"[WARNING] {json_save_path} does not exist. Creating an empty file.")
             # 创建空文件
-            with open(save_path, "w", encoding="utf-8") as f:
+            with open(json_save_path, "w", encoding="utf-8") as f:
                 json.dump({
                     "success": True,
                     "data": [],
@@ -58,28 +58,28 @@ class SteamDTDataProcessor(BaseDataProcessor):
 
         # Step 2: 读取旧数据
         try:
-            with open(save_path, "r", encoding="utf-8") as f:
+            with open(json_save_path, "r", encoding="utf-8") as f:
                 old_data = json.load(f)
         except Exception as e:
-            print(f"[ERROR] Failed to read old data from {save_path}: {e}")
+            print(f"[ERROR] Failed to read old data from {json_save_path}: {e}")
             return None
 
         if not old_data.get("success") or "data" not in old_data:
-            print(f"[ERROR] Invalid data format in {save_path}")
+            print(f"[ERROR] Invalid data format in {json_save_path}")
             return None
         
         old_records = old_data["data"]
 
         # Step 3: 读取新数据
         try:
-            with open(raw_path, "r", encoding="utf-8") as f:
+            with open(json_raw_path, "r", encoding="utf-8") as f:
                 raw_data = json.load(f)
         except Exception as e:
-            print(f"[ERROR] Failed to read raw data from {raw_path}: {e}")
+            print(f"[ERROR] Failed to read raw data from {json_raw_path}: {e}")
             return None
 
         if not raw_data.get("success") or "data" not in raw_data:
-            print(f"[ERROR] Invalid data format in {raw_path}")
+            print(f"[ERROR] Invalid data format in {json_raw_path}")
             return None
         
         raw_records = raw_data["data"]
@@ -97,7 +97,7 @@ class SteamDTDataProcessor(BaseDataProcessor):
                 print(f"[WARNING] Invalid timestamp in record: {record}")
 
         if not new_records:
-            print(f"[INFO] No new records to add to {save_path}.")
+            print(f"[INFO] No new records to add to {json_save_path}.")
             return None
 
         # Step 5: 将新记录插入到 old_records 的头部
@@ -105,7 +105,7 @@ class SteamDTDataProcessor(BaseDataProcessor):
 
         # Step 6: 保存更新后的数据
         try:
-            with open(save_path, "w", encoding="utf-8") as f:
+            with open(json_save_path, "w", encoding="utf-8") as f:
                 json.dump({
                     "success": True,
                     "data": new_records,
@@ -114,9 +114,9 @@ class SteamDTDataProcessor(BaseDataProcessor):
                     "errorData": None,
                     "errorCodeStr": None
                 }, f, ensure_ascii=False, indent=2)
-            print(f"[INFO] Data successfully appended and saved to {save_path}")
+            print(f"[INFO] Data successfully appended and saved to {json_save_path}")
         except Exception as e:
-            print(f"[ERROR] Failed to save updated data to {save_path}: {e}")
+            print(f"[ERROR] Failed to save updated data to {json_save_path}: {e}")
             return None
 
         return new_records

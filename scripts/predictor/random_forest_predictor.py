@@ -1,8 +1,6 @@
 import pandas as pd
 
-from scripts.predictor import base
-
-class RandomForestPredictor(base):
+class RandomForestPredictor():
     def __init__(self, model):
         self.model = model
 

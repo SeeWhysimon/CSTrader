@@ -22,12 +22,12 @@ class RandomForestTrainer():
 
     def train(self, X_train, y_train):
         self.model.fit(X_train, y_train)
+        return self.model
 
     def predict(self, X_test):
         return self.model.predict(X_test)
 
-    def eval(self, X_test, y_test):
-        y_pred = self.predict(X_test)
+    def eval(self, y_test, y_pred):
         return {
             "mse": mean_squared_error(y_test, y_pred),
             "r2": r2_score(y_test, y_pred)

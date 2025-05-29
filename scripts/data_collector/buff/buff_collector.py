@@ -4,7 +4,7 @@ import json
 
 from datetime import datetime
 
-from scripts.DataProcessor.process import clean_buff_data
+from scripts.data_processor.process import clean_buff_data
 from scripts.data_collector.base import BaseDataCollector
 
 class BuffDataCollector(BaseDataCollector):

@@ -2,7 +2,7 @@ import plotly.graph_objects as go
 import plotly.io as pio
 import pandas as pd
 
-from scripts.DataProcessor.loader import load_steamdt_json
+from scripts.data_processor.loader import load_steamdt_json
 
 def kline_plotter(data_path: str):
     # 设置 Plotly 渲染器为浏览器

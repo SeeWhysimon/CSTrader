@@ -1,46 +1,45 @@
-# scripts/data_collector/steamdt/steamdt_collector.py
-
 import json
 import os
+import pandas as pd
 
-from datetime import datetime
 from typing import Dict
 
-from scripts.data_collector.base import BaseDataCollector
+from scripts.data_processor.base import BaseDataProcessor
 
-class SteamDTDataCollector(BaseDataCollector):
-    def collect(self, config_path: str, save_path: str) -> Dict:
-        """从配置文件中读取url/params/headers进行采集"""
+class SteamDTDataProcessor(BaseDataProcessor):
+    def load_data(self, path) -> pd.DataFrame:
+        with open(path, "r", encoding="utf-8") as f:
+            json_data = json.load(f)
 
-        # Step 1: 加载配置文件
-        self.load_config(config_path, self.debug)
+        data = json_data["data"]
+        
+        df = pd.DataFrame(data, columns=["timestamp", "open", "close", "high", "low", "volume", "turnover"])
+        df["timestamp"] = pd.to_datetime(df["timestamp"].astype(int), unit='s')
+        df = df.sort_values("timestamp")
+        
+        return df
+    
+    def add_features(self, df) -> pd.DataFrame:
+        # Add moving avarages
+        windows = [7, 14, 21, 42]
+        for w in windows:
+            df[f"ma{w}"] = df["close"].rolling(window=w).mean()     
+        df.dropna(inplace=True)
 
-        # Step 2: 发起请求并解析响应
-        json_data = self.get_json_response()
+        return df
+    
+    def prepare_data(self, df):
+        df["next_close"] = df["close"].shift(-1)
+        df.dropna(inplace=True)
 
-        # Step 3: 转换时间戳字段为 int
-        if "data" in json_data and isinstance(json_data["data"], list):
-            for record in json_data["data"]:
-                if isinstance(record, list) and len(record) > 0:
-                    try:
-                        record[0] = int(record[0])
-                    except Exception:
-                        print(f"[WARNING] Invalid timestamp format: {record[0]}")
-
-        # Step 4: 保存数据
-        timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-        save_path_with_timestamp = f"{save_path}_{timestamp}.json"
-
-        try:
-            with open(save_path_with_timestamp, "w", encoding="utf-8") as f:
-                json.dump(json_data, f, ensure_ascii=False, indent=2)
-            print(f"[INFO] SteamDT data saved: {save_path_with_timestamp}")
-        except Exception as e:
-            print(f"[ERROR] Failed to save data to {save_path_with_timestamp}: {e}")
-            return None
-
-        return json_data, save_path_with_timestamp
-
+        features = [
+            "open", "close", "high", "low", "volume", "turnover",
+            "ma7", "ma14", "ma21", "ma42"
+        ]
+        target = "next_close"
+        
+        return df, features, target
+    
     def append_data(self, raw_path: str, save_path: str) -> Dict:
         # Step 1: 检查旧数据文件是否存在
         if not os.path.exists(save_path):

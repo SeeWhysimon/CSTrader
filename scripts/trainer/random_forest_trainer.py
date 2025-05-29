@@ -2,12 +2,10 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_squared_error, r2_score
 
-from scripts.model_trainer.base import BaseTrainer
-
-class RandomForestTrainer(BaseTrainer):
+class RandomForestTrainer():
     def __init__(self):
-        super().__init__()
         self.model = RandomForestRegressor()
+        self.best_params = None
 
     def search_params(self, X_train, y_train, param_grid=None):
         if param_grid is None:

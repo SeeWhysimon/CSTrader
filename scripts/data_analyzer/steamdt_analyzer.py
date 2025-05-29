@@ -6,8 +6,8 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, r2_score 
 from sklearn.model_selection import train_test_split, GridSearchCV
 
-from scripts.DataProcessor.loader import load_steamdt_json
-from scripts.DataProcessor.features import add_moving_averages
+from scripts.data_processor.loader import load_steamdt_json
+from scripts.data_processor.features import add_moving_averages
 
 class random_forest_model():
     def __init__(self):
@@ -127,7 +127,7 @@ class random_forest_model():
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 
-from scripts.DataProcessor.checker import check_stationary
+from scripts.data_processor.checker import check_stationary
 
 class arima_model():
     def __init__(self):

@@ -12,12 +12,22 @@ class SteamDTDataProcessor(BaseDataProcessor):
             json_data = json.load(f)
 
         data = json_data["data"]
-        
         df = pd.DataFrame(data, columns=["timestamp", "open", "close", "high", "low", "volume", "turnover"])
         df["timestamp"] = pd.to_datetime(df["timestamp"].astype(int), unit='s')
         df = df.sort_values("timestamp")
-        
-        return df
+
+        df.set_index("timestamp", inplace=True)
+        daily_df = df.resample("1D").agg({
+            "open": "first",
+            "close": "last",
+            "high": "max",
+            "low": "min",
+            "volume": "sum",
+            "turnover": "sum"
+        })
+        daily_df = daily_df.dropna().reset_index()
+
+        return daily_df
     
     def add_features(self, df) -> pd.DataFrame:
         # Add moving avarages
@@ -29,16 +39,21 @@ class SteamDTDataProcessor(BaseDataProcessor):
         return df
     
     def prepare_data(self, df):
+        df["next_open"] = df["open"].shift(-1)
         df["next_close"] = df["close"].shift(-1)
+        df["next_high"] = df["high"].shift(-1)
+        df["next_low"] = df["low"].shift(-1)
+        df["next_volume"] = df["volume"].shift(-1)
+        df["next_turnover"] = df["turnover"].shift(-1)
         df.dropna(inplace=True)
 
         features = [
             "open", "close", "high", "low", "volume", "turnover",
             "ma7", "ma14", "ma21", "ma42"
         ]
-        target = "next_close"
+        targets = ["next_open", "next_close", "next_high", "next_low", "next_volume", "next_turnover"]
         
-        return df, features, target
+        return df, features, targets
     
     def append_data(self, json_raw_path: str, json_save_path: str) -> Dict:
         # Step 1: 检查旧数据文件是否存在

@@ -26,3 +26,6 @@ def visualize_kline(data: pd.DataFrame):
     )
 
     fig.show()
+
+
+    

@@ -15,3 +15,17 @@ class BuffDataProcessor(BaseDataProcessor):
         df = pd.json_normalize(items)
 
         return df
+    
+    def clean_data(self, data: pd.DataFrame, save_path: str = None):
+        target_cols = ["asset_info.id", 
+                       "asset_info.info.paintindex", 
+                       "asset_info.info.paintseed", 
+                       "asset_info.info.paintwear", 
+                       "price", 
+                       "transact_time"]
+        cleaned_data = pd.DataFrame(data[target_cols], columns=target_cols)
+        
+        if save_path:
+            cleaned_data.to_csv("./data/processed/buff.csv")
+        
+        return cleaned_data

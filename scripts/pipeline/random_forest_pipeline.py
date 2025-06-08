@@ -16,8 +16,7 @@ class RandomForestPipeline:
                                                      'estimator__min_samples_split': 5, 
                                                      'estimator__n_estimators': 50})
 
-    def run(self):
-        config_path = "./scripts/data_collector/steamdt/steamdt_config.json"
+    def run(self, config_path):
         _, save_path_with_timestamp = self.collector.collect(config_path=config_path, 
                                                              save_path="./data/raw/steamdt")
 

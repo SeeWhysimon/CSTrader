@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 from scripts.data_collector.steamdt.steamdt_collector import SteamDTDataCollector
 from scripts.data_processor.steamdt_processor import SteamDTDataProcessor
 from scripts.predictor.random_forest_predictor import RandomForestPredictor
-from Visualizer import visualize_kline
+from scripts.Visualizer import visualize_kline
 
 class RandomForestPipeline:
     def __init__(self):

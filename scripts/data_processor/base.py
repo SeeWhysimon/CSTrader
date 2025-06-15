@@ -3,5 +3,5 @@ import pandas as pd
 
 class BaseDataProcessor(ABC):
     @abstractmethod
-    def load_data(self, path: str) -> pd.DataFrame:
+    def load_raw(self, path: str) -> pd.DataFrame:
         ...

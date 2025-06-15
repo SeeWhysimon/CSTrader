@@ -7,7 +7,7 @@ from typing import Dict
 from scripts.data_processor.base import BaseDataProcessor
 
 class SteamDTDataProcessor(BaseDataProcessor):
-    def load_data(self, path) -> pd.DataFrame:
+    def load_raw(self, path) -> pd.DataFrame:
         with open(path, "r", encoding="utf-8") as f:
             json_data = json.load(f)
 

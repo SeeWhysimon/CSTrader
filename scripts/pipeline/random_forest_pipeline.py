@@ -22,7 +22,7 @@ class RandomForestPipeline:
 
         self.data_processor.append_data(json_raw_path=save_path_with_timestamp, 
                                         json_save_path="./data/processed/steamdt.json")
-        df = self.data_processor.load_data(path="./data/processed/steamdt.json")
+        df = self.data_processor.load_raw(path="./data/processed/steamdt.json")
         visualize_kline(df)
         df = self.data_processor.add_features(df)
         df, features, targets = self.data_processor.prepare_data(df)
